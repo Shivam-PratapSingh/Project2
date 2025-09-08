@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI-Powered Crop Yield Prediction and Optimization | Smart India Hackathon</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Custom Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: 'hsl(120 60% 35%)',
+            'primary-foreground': 'hsl(0 0% 98%)',
+            secondary: 'hsl(120 30% 95%)',
+            'secondary-foreground': 'hsl(120 10% 15%)',
+            muted: 'hsl(120 15% 94%)',
+            'muted-foreground': 'hsl(120 5% 50%)',
+            accent: 'hsl(45 95% 50%)',
+            'accent-foreground': 'hsl(120 10% 15%)',
+            destructive: 'hsl(0 84.2% 60.2%)',
+            border: 'hsl(120 20% 88%)',
+            input: 'hsl(120 20% 88%)',
+            ring: 'hsl(120 60% 35%)',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' }
+            }
+          },
+          animation: {
+            float: 'float 3s ease-in-out infinite'
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    /* ===== START OF CSS SECTION ===== */
+    :root {
+      --background: hsl(120 20% 98%);
+      --foreground: hsl(120 10% 15%);
+      --gradient-primary: linear-gradient(135deg, hsl(120 60% 35%), hsl(120 70% 45%));
+      --gradient-accent: linear-gradient(135deg, hsl(45 95% 50%), hsl(50 90% 55%));
+      --gradient-bg: linear-gradient(180deg, hsl(120 20% 98%), hsl(120 30% 96%));
+    }
+    body {
+      background: var(--background);
+      color: var(--foreground);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    .mobile-menu {
+      display: none;
+    }
+    .mobile-menu.open {
+      display: block;
+    }
+    .card {
+      background: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+    }
+    .hero-bg {
+      background: linear-gradient(to bottom right, hsl(120 60% 35% / 0.08), hsl(45 95% 50% / 0.12));
+    }
+    .bg-gradient-text {
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .animate-float {
+      animation: float 3s ease-in-out infinite;
+    }
+    /* Progress bar styles */
+    .progress-bar {
+      height: 8px;
+      background: rgba(120, 113, 108, 0.2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 1s ease-in-out;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.5);
+    }
+    .modal-content {
+      background-color: var(--background);
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 80%;
+      max-width: 500px;
+    }
+    /* Basic chart styles */
+    .chart-bar {
+      margin: 5px 0;
+      height: 20px;
+      border-radius: 3px;
+      transition: width 0.8s ease;
+    }
+    .chart-label {
+      font-size: 0.875rem;
+      margin-bottom: 4px;
+    }
+    /* ===== END OF CSS SECTION ===== */
+  </style>
+</head>
+<body class="bg-background text-foreground">
+  <!-- ===== START OF HTML SECTION ===== -->
+  <!-- Header -->
+  <header class="fixed top-0 w-full bg-background/95 backdrop-blur-md border-b border-border z-50">
+    <div class="container mx-auto px-4 max-w-7xl">
+      <div class="flex items-center justify-between h-16">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+          <div class="flex items-center justify-center w-12 h-12 bg-primary rounded-xl animate-float">
+            <svg class="w-8 h-8 text-primary-foreground" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </div>
+          <span class="text-2xl font-bold text-foreground">CropAI</span>
+        </div>
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center space-x-8">
+          <a href="#home" class="text-foreground hover:text-primary transition-colors duration-300">Home</a>
+          <a href="#features" class="text-foreground hover:text-primary transition-colors duration-300">Features</a>
+          <a href="#dashboard" class="text-foreground hover:text-primary transition-colors duration-300">Dashboard</a>
+          <a href="#testimonials" class="text-foreground hover:text-primary transition-colors duration-300">Testimonials</a>
+          <a href="#contact" class="text-foreground hover:text-primary transition-colors duration-300">Contact</a>
+        </nav>
+        <!-- Desktop Actions -->
+        <div class="hidden md:flex items-center space-x-4">
+          <button id="modal-btn" class="bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition duration-300">View Demo</button>
+        </div>
+        <!-- Mobile Menu Toggle -->
+        <button id="menu-toggle" class="md:hidden p-2" aria-label="Toggle menu">
+          <svg id="menu-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+      <!-- Mobile Navigation -->
+      <div id="mobile-menu" class="mobile-menu md:hidden py-4 border-t border-border bg-background/95 backdrop-blur-md">
+        <nav class="flex flex-col space-y-4">
+          <a href="#home" class="text-foreground hover:text-primary transition-colors px-4 py-2">Home</a>
+          <a href="#features" class="text-foreground hover:text-primary transition-colors px-4 py-2">Features</a>
+          <a href="#dashboard" class="text-foreground hover:text-primary transition-colors px-4 py-2">Dashboard</a>
+          <a href="#testimonials" class="text-foreground hover:text-primary transition-colors px-4 py-2">Testimonials</a>
+          <a href="#contact" class="text-foreground hover:text-primary transition-colors px-4 py-2">Contact</a>
+          <div class="px-4 pt-4 border-t border-border">
+            <button id="mobile-modal-btn" class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary/90 transition duration-300">View Demo</button>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section id="home" class="min-h-screen flex items-center justify-center hero-bg px-4 pt-20">
+      <div class="container mx-auto text-center max-w-5xl">
+        <div class="flex justify-center mb-8">
+          <div class="flex items-center space-x-2 bg-primary/10 px-4 py-2 rounded-full">
+            <svg class="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            <span class="text-sm font-medium text-primary">AI-Powered Agriculture</span>
+          </div>
+        </div>
+        <h1 class="text-4xl md:text-7xl font-bold mb-6 leading-tight">
+          Revolutionize Your Crop
+          <span class="bg-gradient-text block md:inline"> Yield with AI</span>
+        </h1>
+        <p class="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto leading-relaxed">
+          Leverage advanced AI models for precise yield prediction, optimization recommendations, and sustainable farming practices tailored for Indian agriculture.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+          <a href="#dashboard" class="bg-primary text-primary-foreground px-6 py-4 rounded-lg hover:bg-primary/90 transition duration-300 text-lg font-semibold group">
+            Start Predicting
+            <svg class="ml-2 w-5 h-5 inline group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7l7 7-7 7" />
+            </svg>
+          </a>
+          <button id="hero-modal-btn" class="border-2 border-primary text-primary px-6 py-4 rounded-lg hover:bg-primary hover:text-primary-foreground transition duration-300 text-lg font-semibold">Watch Demo</button>
+        </div>
+        <!-- Hero Image Placeholder -->
+        <div class="mb-8">
+          <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/60fff3b9-bdd9-45b7-83f0-837cd029d1dd.png" alt="Vibrant Indian farmland with lush green crops under a clear sky, farmers working with modern AI tools in hand, showcasing sustainable agriculture practices in a rural village setting" class="rounded-xl shadow-lg mx-auto max-w-full" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 bg-secondary/20">
+      <div class="container mx-auto max-w-7xl">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-5xl font-bold mb-6">
+            Powerful Features for
+            <span class="text-primary"> Smart Farming</span>
+          </h2>
+          <p class="text-lg text-muted-foreground max-w-3xl mx-auto">
+            Our platform integrates cutting-edge AI with real-time data to empower farmers with actionable insights.
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <!-- Feature Cards -->
+          <div class="card p-8 text-center">
+            <div class="w-16 h-16 bg-primary/10 rounded-full mx-auto mb-6 flex items-center justify-center">
+              <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4">Real-Time Analytics</h3>
+            <p class="text-muted-foreground">Monitor crop health, weather, and soil conditions with live data updates.</p>
+          </div>
+          <!-- Add more features similarly -->
+          <div class="card p-8 text-center">
+            <div class="w-16 h-16 bg-accent/10 rounded-full mx-auto mb-6 flex items-center justify-center">
+              <svg class="w-8 h-8 text-accent" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4">Yield Prediction</h3>
+            <p class="text-muted-foreground">Accurate forecasts using machine learning trained on Indian agricultural data.</p>
+          </div>
+          <div class="card p-8 text-center">
+            <div class="w-16 h-16 bg-primary/10 rounded-full mx-auto mb-6 flex items-center justify-center">
+              <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-semibold mb-4">Optimization Tips</h3>
+            <p class="text-muted-foreground">Get personalized recommendations for irrigation, fertilization, and pest control.</p>
+          </div>
+          <!-- More features... (abbreviated for brevity) -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Dashboard -->
+    <section id="dashboard" class="py-20 px-4">
+      <div class="container mx-auto max-w-7xl">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-5xl font-bold mb-6">
+            Interactive
+            <span class="text-primary"> Prediction Hub</span>
+          </h2>
+          <p class="text-lg text-muted-foreground">Input parameters and see real-time AI predictions.</p>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- Input Panel -->
+          <div class="card p-6 lg:col-span-1">
+            <h3 class="text-xl font-semibold mb-6">Input Parameters</h3>
+            <form id="prediction-form">
+              <div class="space-y-4">
+                <label for="crop-type" class="sr-only">Select Crop Type</label>
+                <select id="crop-type" class="w-full p-2 border rounded" title="Select Crop Type">
+                  <option value="wheat">Wheat</option>
+                  <option value="rice">Rice</option>
+                  <option value="corn">Corn</option>
+                </select>
+                <input id="area" type="number" placeholder="Area (hectares)" class="w-full p-2 border rounded">
+                <select id="soil-type" class="w-full p-2 border rounded" title="Select Soil Type">
+                  <option value="loamy">Loamy</option>
+                  <option value="clay">Clay</option>
+                </select>
+                <button type="submit" class="w-full bg-primary text-primary-foreground py-2 rounded transition hover:bg-primary/90">Generate Prediction</button>
+              </div>
+            </form>
+            <!-- Progress Bar -->
+            <div class="mt-6">
+              <p class="text-sm text-muted-foreground mb-2">Prediction Loading...</p>
+              <div id="progress-bar" class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Output Panel -->
+          <div class="lg:col-span-2">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+              <div class="card p-6" id="yield-card">
+                <h4 class="text-lg font-semibold text-primary mb-4">Predicted Yield</h4>
+                <div class="text-3xl font-bold text-primary" id="yield-value">Awaiting Input</div>
+              </div>
+              <div class="card p-6" id="confidence-card">
+                <h4 class="text-lg font-semibold text-accent mb-4">Confidence Score</h4>
+                <div class="text-3xl font-bold text-accent" id="confidence-value">--</div>
+              </div>
+            </div>
+            <!-- Simple Chart -->
+            <div class="card p-6">
+              <h4 class="text-lg font-semibold mb-4">Yield Factors</h4>
+              <div id="chart-container">
+                <p id="chart-placeholder">Chart will appear after prediction.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 px-4 bg-secondary/30">
+      <div class="container mx-auto max-w-6xl">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-5xl font-bold mb-6">Success Stories</h2>
+          <p class="text-lg text-muted-foreground">Hear from farmers who've transformed their yields.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="card p-6">
+            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/32215a07-5a64-466c-93fc-084ff2b10938.png" alt="Portrait of a smiling Indian farmer in traditional attire standing in a wheat field, with a satisfied expression after using AI tools" class="rounded-full w-16 h-16 mb-4">
+            <p class="italic">"CropAI doubled my wheat yield in just one season!"</p>
+            <p class="font-semibold mt-2">- Rajesh Kumar, Punjab</p>
+          </div>
+          <!-- More testimonials -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section id="contact" class="py-20 px-4">
+      <div class="container mx-auto max-w-4xl">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-5xl font-bold mb-6">Get in Touch</h2>
+          <p>Contact us to learn more about optimizing your farm.</p>
+        </div>
+        <form class="card p-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" placeholder="Name" class="p-2 border rounded">
+            <input type="email" placeholder="Email" class="p-2 border rounded">
+          </div>
+          <textarea rows="4" placeholder="Message" class="w-full p-2 border rounded mt-4"></textarea>
+          <button type="submit" class="mt-4 bg-primary text-primary-foreground px-4 py-2 rounded hover:bg-primary/90 transition">Send Message</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-primary/5 py-12 px-4">
+    <div class="container mx-auto text-center">
+      <div class="flex items-center justify-center space-x-2 mb-4">
+        <div class="flex items-center justify-center w-10 h-10 bg-primary rounded-lg">
+          <svg class="w-6 h-6 text-primary-foreground" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+        </div>
+        <span class="text-xl font-bold">CropAI</span>
+      </div>
+      <p class="text-muted-foreground mb-6">Empowering Indian farmers with AI for a brighter future.</p>
+      <div class="text-sm text-muted-foreground">© 2024 CropAI | Smart India Hackathon Submission</div>
+    </div>
+  </footer>
+
+  <!-- Modal for Demo -->
+  <div id="demo-modal" class="modal">
+    <div class="modal-content">
+      <span id="close-modal" class="float-right text-2xl cursor-pointer">&times;</span>
+      <h3 class="text-xl font-bold mb-4">Interactive Demo</h3>
+      <p>Watch our AI in action predicting crop yields based on real inputs.</p>
+      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/b1e31279-663e-46b3-98a3-33261d6b2e19.png" alt="Dynamic animation of a farmer interacting with a digital dashboard showing crop yield predictions with graphs and data visualizations on a laptop screen" class="mt-4 rounded">
+    </div>
+  </div>
+  <!-- ===== END OF HTML SECTION ===== -->
+
+  <!-- ===== START OF JAVASCRIPT SECTION ===== -->
+  <script>
+    // Mobile Menu Toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIcon = document.getElementById('menu-icon');
+
+    menuToggle.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+      const isOpen = mobileMenu.classList.contains('open');
+      menuIcon.innerHTML = isOpen ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />' : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />';
+    });
+
+    // Modal Handling
+    const modal = document.getElementById('demo-modal');
+    const modalBtns = document.querySelectorAll('#modal-btn, #mobile-modal-btn, #hero-modal-btn');
+    const closeModal = document.getElementById('close-modal');
+
+    modalBtns.forEach(btn => btn.addEventListener('click', () => modal.style.display = 'block'));
+    closeModal.addEventListener('click', () => modal.style.display = 'none');
+    window.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+
+    // Prediction Form Handling
+    const form = document.getElementById('prediction-form');
+    const yieldValue = document.getElementById('yield-value');
+    const confidenceValue = document.getElementById('confidence-value');
+    const progressFill = document.getElementById('progress-fill');
+    const chartContainer = document.getElementById('chart-container');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Simulate prediction
+      const cropType = document.getElementById('crop-type').value;
+      const area = parseFloat(document.getElementById('area').value) || 1;
+      const soilType = document.getElementById('soil-type').value;
+
+      // Simple logic for demo
+      let baseYield = cropType === 'wheat' ? 3.5 : cropType === 'rice' ? 4.2 : 5.0;
+      if (soilType === 'loamy') baseYield *= 1.1;
+      const predictedYield = (baseYield * area).toFixed(1);
+      const confidence = Math.floor(Math.random() * 10) + 85;
+
+      // Animate progress
+      progressFill.style.width = '0%';
+      setTimeout(() => progressFill.style.width = '100%', 100);
+
+      // Update values after delay
+      setTimeout(() => {
+        yieldValue.textContent = `${predictedYield} tons`;
+        confidenceValue.textContent = `${confidence}%`;
+
+        // Generate simple chart
+        chartContainer.innerHTML = `
+          <div>
+            <div class="chart-label">Rainfall Contribution</div>
+            <div class="chart-bar bg-blue-500" style="width: ${Math.random()*80 + 20}%"></div>
+            <div class="chart-label">Soil Quality</div>
+            <div class="chart-bar bg-green-500" style="width: ${Math.random()*80 + 20}%"></div>
+            <div class="chart-label">Temperature</div>
+            <div class="chart-bar bg-red-500" style="width: ${Math.random()*80 + 20}%"></div>
+          </div>
+        `;
+      }, 1500);
+    });
+
+    // Smooth Scrolling for Nav Links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+  <!-- ===== END OF JAVASCRIPT SECTION ===== -->
+</body>
+</html>
+</content>
+</create_file>
+

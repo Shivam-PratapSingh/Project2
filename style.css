@@ -1,0 +1,32 @@
+/* Shared styles */
+
+html { scroll-behavior: smooth; }
+
+.navbar { background: #14532d; color: white; position: fixed; width: 100%; z-index: 50; }
+.navbar a { transition: color 0.2s; }
+.navbar a:hover { color: #bbf7d0; }
+
+.mobile-menu { background: #166534; display: flex; flex-direction: column; padding: 1rem; text-align: center; }
+
+/* Hero */
+.hero-bg { background: url('assets/farm-bg.jpg') center/cover no-repeat; position: relative; }
+.hero-bg::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,100,0,0.6); }
+
+/* Sections */
+.section-title { font-size: 1.875rem; font-weight: bold; text-align: center; margin-bottom: 3rem; }
+
+/* Card */
+.card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; transition: transform 0.2s; }
+.card:hover { transform: translateY(-5px); }
+
+/* Buttons */
+.button { background: #166534; color: white; padding: 0.75rem 1.5rem; border-radius: 0.75rem; display: inline-block; transition: 0.2s; }
+.button:hover { background: #14532d; transform: translateY(-2px); }
+
+/* Footer */
+.footer { background: #14532d; color: white; padding: 2rem; text-align: center; }
+
+/* Auth Pages */
+.auth-card { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 100%; max-width: 400px; }
+.input-field { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 0.5rem; outline: none; }
+.input-field:focus { border-color: #16a34a; box-shadow: 0 0 0 2px #bbf7d0; }
